@@ -365,7 +365,7 @@ confirmOverlay.addEventListener('click',e=>{if(e.target===confirmOverlay)closeCo
 
 /* === 주문완료 → 구글시트 전송 (doPost 방식) === */
 // ▼▼▼ 여기에 본인의 Apps Script 웹앱 /exec 주소를 붙여넣으세요 ▼▼▼
-const SHEET_URL = "여기에_웹앱_URL_붙여넣기";
+const SHEET_URL = "https://script.google.com/macros/s/AKfycbziuNC02y4nW-qf0acybeohI0isvL1wDxroxKU18-nfLgXkw1RSLzXblaX4o-vcuROj2w/exec";
 // ▲▲▲ 예: https://script.google.com/macros/s/AKfy.../exec ▲▲▲
 
 const sendOverlay=document.getElementById('sendOverlay');
@@ -398,7 +398,7 @@ function onSent(){
   document.getElementById('sendBox').classList.remove('sending');
   document.getElementById('sendCup').textContent='🎉';
   document.getElementById('sendMsg').textContent='주문 완료!';
-  document.getElementById('sendNote').textContent='맛있게 만들어 드릴게요 ☕';
+  document.getElementById('sendNote').textContent='회의시간에 뵙겠습니다~ ☕';
   document.getElementById('sendActions').style.display='flex';
 }
 function onPreview(){
