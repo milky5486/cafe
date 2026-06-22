@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>오늘 드실 음료 주문</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Gowun+Dodum&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#FFF9EC;--cream2:#FDF1D6;--card:#FFFFFF;--ink:#3A2E1F;--muted:#A8967A;--line:#F0E6CF;
+    --yolk:#FFC83D;--yolk-deep:#F4A91F;--espresso:#3A2A18;--hot:#E2592B;--ice:#3D8FD1;
+    --shadow:0 2px 6px rgba(120,90,40,.07),0 14px 32px rgba(120,90,40,.10);
+    --shadow-sm:0 1px 3px rgba(120,90,40,.08);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:'Gowun Dodum','Apple SD Gothic Neo',system-ui,sans-serif;
+    background:
+      radial-gradient(1200px 500px at 80% -10%, #FFE9B0 0%, transparent 60%),
+      radial-gradient(900px 500px at -10% 10%, #FFF0CF 0%, transparent 55%),
+      var(--cream);
+    color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.55;min-height:100vh;
+  }
+  .wrap{max-width:920px;margin:0 auto;padding:30px 20px 90px}
+
+  header.hero{text-align:center;margin-bottom:24px}
+  .badge-cup{font-size:42px;line-height:1;margin-bottom:6px;filter:drop-shadow(0 4px 6px rgba(160,120,40,.25))}
+  header.hero h1{font-family:'Gaegu',cursive;font-size:44px;font-weight:700;letter-spacing:-1px;color:var(--espresso);line-height:1.15}
+  header.hero h1 .hl{color:var(--yolk-deep)}
+  header.hero .sub{font-family:'Gaegu',cursive;font-size:21px;color:var(--muted);margin-top:4px}
+  header.hero .store{display:inline-block;margin-top:11px;font-size:13px;color:#B58E4E;background:#FFF4D6;padding:5px 14px;border-radius:999px;border:1.5px dashed #EBCF93}
+
+  .orderer{background:var(--card);border-radius:22px;padding:20px 22px;box-shadow:var(--shadow);margin-bottom:22px;border:2px solid #FFEFC4}
+  .orderer .label{font-family:'Gaegu',cursive;font-size:22px;font-weight:700;margin-bottom:12px;color:var(--espresso)}
+  .orderer .label .em{color:var(--yolk-deep)}
+  .orderer .step{display:inline-block;background:var(--yolk);color:var(--espresso);font-size:13px;font-weight:700;border-radius:999px;padding:2px 11px;margin-right:8px;font-family:'Gowun Dodum',sans-serif;vertical-align:middle}
+  select.who-select{
+    width:100%;font-size:18px;font-weight:600;padding:16px 18px;border:2px solid var(--line);
+    border-radius:14px;background:var(--cream);color:var(--ink);font-family:inherit;cursor:pointer;appearance:none;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23F4A91F' stroke-width='3'><path d='M6 9l6 6 6-6'/></svg>");
+    background-repeat:no-repeat;background-position:right 18px center;transition:border-color .15s;
+  }
+  select.who-select:focus{outline:none;border-color:var(--yolk)}
+
+  .menu-head{font-family:'Gaegu',cursive;font-size:22px;font-weight:700;color:var(--espresso);margin:4px 2px 12px}
+  .menu-head .step{display:inline-block;background:var(--yolk);color:var(--espresso);font-size:13px;font-weight:700;border-radius:999px;padding:2px 11px;margin-right:8px;font-family:'Gowun Dodum',sans-serif;vertical-align:middle}
+
+  .tabs{display:flex;gap:9px;overflow-x:auto;padding:4px 2px 12px}
+  .tabs::-webkit-scrollbar{height:0}
+  .tab{white-space:nowrap;border:2px solid transparent;background:#fff;color:var(--muted);padding:11px 19px;border-radius:999px;font-size:15px;font-weight:700;cursor:pointer;box-shadow:var(--shadow-sm);transition:all .15s;font-family:inherit}
+  .tab:hover{color:var(--espresso)}
+  .tab.active{background:var(--yolk);color:var(--espresso);border-color:var(--yolk-deep);box-shadow:0 6px 14px rgba(244,169,31,.35)}
+
+  .menu{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:14px}
+  .item{background:var(--card);border-radius:18px;padding:18px 16px;box-shadow:var(--shadow-sm);cursor:pointer;text-align:left;border:2px solid #fff;transition:all .14s;display:flex;flex-direction:column;gap:8px;min-height:112px;position:relative;overflow:hidden}
+  .item::after{content:"+";position:absolute;right:14px;bottom:12px;width:28px;height:28px;border-radius:50%;background:var(--cream2);color:var(--yolk-deep);font-size:21px;font-weight:700;display:flex;align-items:center;justify-content:center;transition:all .14s;line-height:1}
+  .item:hover{border-color:var(--yolk);transform:translateY(-3px);box-shadow:var(--shadow)}
+  .item:hover::after{background:var(--yolk);color:#fff;transform:rotate(90deg)}
+  .item .nm{font-size:16.5px;font-weight:700;line-height:1.32;color:var(--espresso);padding-right:20px}
+  .item .pr{font-size:14px;color:var(--muted);margin-top:auto;font-weight:600}
+  .item .badge{font-size:11px;font-weight:700;padding:2px 8px;border-radius:7px;align-self:flex-start}
+  .b-hot{background:#FCE7DE;color:var(--hot)}
+  .b-ice{background:#E2EFFA;color:var(--ice)}
+  .disabled-note{text-align:center;color:var(--muted);font-size:14px;padding:24px;background:#fff;border-radius:16px;border:2px dashed var(--line)}
+
+  .overlay{position:fixed;inset:0;background:rgba(58,42,24,.42);backdrop-filter:blur(2px);display:none;align-items:center;justify-content:center;padding:20px;z-index:50}
+  .overlay.show{display:flex}
+  .modal{background:#fff;border-radius:24px;padding:26px;max-width:420px;width:100%;box-shadow:0 24px 70px rgba(58,42,24,.3);animation:pop .18s ease}
+  @keyframes pop{from{transform:scale(.94);opacity:.6}to{transform:scale(1);opacity:1}}
+  .modal h3{font-family:'Gaegu',cursive;font-size:27px;font-weight:700;color:var(--espresso)}
+  .modal .mprice{font-size:15px;color:var(--yolk-deep);font-weight:700;margin-bottom:20px}
+  .modal .fld{margin-bottom:20px}
+  .modal .fld>.t{font-size:14px;font-weight:700;margin-bottom:9px;color:var(--espresso)}
+  .modal .req{color:var(--hot);font-size:12px;margin-left:5px}
+  .temp-row{display:flex;gap:11px}
+  .temp-btn{flex:1;border:2px solid var(--line);background:#fff;padding:17px;border-radius:15px;font-size:16px;font-weight:700;cursor:pointer;transition:all .14s;color:var(--muted);font-family:inherit}
+  .temp-btn:disabled{opacity:.32;cursor:not-allowed}
+  .temp-btn.sel-hot{border-color:var(--hot);background:#FCE7DE;color:var(--hot)}
+  .temp-btn.sel-ice{border-color:var(--ice);background:#E2EFFA;color:var(--ice)}
+  .modal input[type=text]{width:100%;border:2px solid var(--line);border-radius:13px;padding:13px;font-size:14px;font-family:inherit;background:var(--cream)}
+  .modal input[type=text]:focus{outline:none;border-color:var(--yolk);background:#fff}
+  .modal .mactions{display:flex;gap:11px;margin-top:6px}
+  .modal .mactions .btn{flex:1}
+  .btn{border:none;border-radius:14px;padding:15px;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .14s}
+  .btn-add{background:var(--yolk);color:var(--espresso)}
+  .btn-add:hover{background:var(--yolk-deep)}
+  .btn-add:disabled{opacity:.5;cursor:not-allowed}
+  .btn-cancel{background:#fff;color:var(--muted);border:2px solid var(--line)}
+  .warn{color:var(--hot);font-size:13.5px;font-weight:700;margin-bottom:12px;display:none;background:#FCE7DE;padding:10px 12px;border-radius:11px}
+  .warn.show{display:block}
+
+  .confirm-box{text-align:center}
+  .confirm-box .cup{font-size:46px;margin-bottom:8px}
+  .confirm-box .cmsg{font-size:21px;font-weight:700;line-height:1.5;margin-bottom:4px;color:var(--espresso);font-family:'Gaegu',cursive}
+  .confirm-box .cmsg .hl{color:var(--yolk-deep)}
+  .confirm-box .cnote{font-size:14px;color:var(--muted);margin:12px 0 22px}
+  .sending .cup{animation:steam 1s ease-in-out infinite}
+  @keyframes steam{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+
+  .toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--espresso);color:#fff;padding:13px 24px;border-radius:999px;font-size:14.5px;font-weight:600;opacity:0;transition:all .25s;pointer-events:none;z-index:60;box-shadow:0 8px 24px rgba(0,0,0,.2)}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="hero">
+    <div class="badge-cup">☕</div>
+    <h1>오늘 드실 <span class="hl">음료 주문</span> 받습니다!</h1>
+    <div class="sub">성함 선택 → 메뉴 선택 → 주문완료를 눌러주세요 :)</div>
+    <div class="store">📍 컴포즈커피 시흥시화나래점</div>
+  </header>
+
+  <section class="orderer">
+    <div class="label"><span class="step">STEP 1</span><span class="em">어느 분</span>이 주문하시나요?</div>
+    <select class="who-select" id="whoSelect">
+      <option value="">— 성함을 골라주세요 —</option>
+    </select>
+  </section>
+
+  <div class="menu-head"><span class="step">STEP 2</span>드시고 싶은 메뉴를 골라주세요</div>
+  <div class="tabs" id="tabs"></div>
+  <div class="menu" id="menu"></div>
+</div>
+
+<!-- 옵션 모달 -->
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <h3 id="mName"></h3>
+    <div class="mprice" id="mPrice"></div>
+    <div class="warn" id="warn">앗! 성함과 핫/아이스를 먼저 골라주세요 🙂</div>
+    <div class="fld">
+      <div class="t">🌡️ 온도<span class="req">* 필수</span></div>
+      <div class="temp-row">
+        <button class="temp-btn" id="btnHot" onclick="pickTemp('HOT')">🔥 HOT</button>
+        <button class="temp-btn" id="btnIce" onclick="pickTemp('ICE')">🧊 ICE</button>
+      </div>
+    </div>
+    <div class="fld">
+      <div class="t">✏️ 기타 요청사항 <span style="color:var(--muted);font-weight:500;font-size:12.5px">(선택 · 사이즈, 디카페인, 샷추가 등)</span></div>
+      <input type="text" id="mNote" placeholder="예: 라지 / 디카페인 / 연하게" autocomplete="off">
+    </div>
+    <div class="mactions">
+      <button class="btn btn-cancel" onclick="closeModal()">취소</button>
+      <button class="btn btn-add" onclick="askConfirm()">주문하기</button>
+    </div>
+  </div>
+</div>
+
+<!-- 확인 모달 -->
+<div class="overlay" id="confirmOverlay">
+  <div class="modal confirm-box">
+    <div class="cup">🤔</div>
+    <div class="cmsg" id="confirmMsg"></div>
+    <div class="cnote">이대로 주문할까요?</div>
+    <div class="mactions">
+      <button class="btn btn-cancel" onclick="closeConfirm()">다시 고를게요</button>
+      <button class="btn btn-add" id="finalBtn" onclick="submitOrder()">네, 주문완료!</button>
+    </div>
+  </div>
+</div>
+
+<!-- 전송중/완료 모달 -->
+<div class="overlay" id="sendOverlay">
+  <div class="modal confirm-box sending" id="sendBox">
+    <div class="cup" id="sendCup">☕</div>
+    <div class="cmsg" id="sendMsg">주문을 전하고 있어요...</div>
+    <div class="cnote" id="sendNote">잠시만 기다려 주세요</div>
+    <div class="mactions" id="sendActions" style="display:none">
+      <button class="btn btn-add" onclick="closeSend()">확인</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const PEOPLE = ["교장선생님","교감선생님","안용진","조희윤","강명승","오재식","황상연","고선하","양슬아","손지용","임호준","신호철"];
+
+const MENU = {
+  "커피":[
+    {name:"빅포즈 아메리카노", price:3500, temp:"ICE"},
+    {name:"아메리카노", price:2000, temp:"BOTH"},
+    {name:"에스프레소", price:2000, temp:"HOT"},
+    {name:"꿀 아메리카노", price:2800, temp:"BOTH"},
+    {name:"컴포즈 믹스커피", price:2800, temp:"ICE"},
+    {name:"콜드브루", price:3800, temp:"ICE"},
+    {name:"콜드브루라떼", price:4300, temp:"ICE"},
+    {name:"쫀득카노", price:6800, temp:"ICE"},
+    {name:"커피엔 역시 커피빵", price:4800, temp:"ICE"},
+    {name:"파인애플 커피", price:3800, temp:"ICE"},
+    {name:"빅포즈 파인애플 커피", price:5400, temp:"ICE"},
+  ],
+  "디카페인":[
+    {name:"빅포즈 디카페인 아메리카노", price:4500, temp:"ICE"},
+    {name:"디카페인 아메리카노", price:3000, temp:"BOTH"},
+    {name:"디카페인 카페라떼", price:4400, temp:"BOTH"},
+    {name:"디카페인 바닐라라떼", price:4800, temp:"BOTH"},
+    {name:"디카페인 헤이즐넛라떼", price:4800, temp:"BOTH"},
+    {name:"디카페인 돌체라떼", price:5300, temp:"BOTH"},
+    {name:"디카페인 콜드브루", price:4000, temp:"ICE"},
+    {name:"디카페인 콜드브루라떼", price:4500, temp:"ICE"},
+  ],
+  "베버리지(라떼)":[
+    {name:"카페라떼", price:3400, temp:"BOTH"},
+    {name:"빅포즈 카페라떼", price:5000, temp:"ICE"},
+    {name:"카푸치노", price:3400, temp:"HOT"},
+    {name:"바닐라라떼", price:3800, temp:"BOTH"},
+    {name:"빅포즈 바닐라라떼", price:5400, temp:"ICE"},
+    {name:"헤이즐넛라떼", price:3800, temp:"BOTH"},
+    {name:"빅포즈 헤이즐넛라떼", price:5400, temp:"ICE"},
+    {name:"카라멜마키아토", price:3800, temp:"BOTH"},
+    {name:"카페모카", price:4000, temp:"BOTH"},
+    {name:"아샷추", price:4000, temp:"ICE"},
+    {name:"빅포즈 아샷추", price:4900, temp:"ICE"},
+    {name:"돌체라떼", price:4300, temp:"BOTH"},
+    {name:"빅포즈 돌체라떼", price:5900, temp:"ICE"},
+    {name:"흑당카페라떼", price:4300, temp:"ICE"},
+    {name:"아인슈페너라떼", price:4700, temp:"ICE"},
+    {name:"달고나라떼", price:4500, temp:"ICE"},
+    {name:"곡물라떼", price:3800, temp:"BOTH"},
+    {name:"고구마라떼", price:4000, temp:"BOTH"},
+    {name:"그린티라떼", price:4000, temp:"BOTH"},
+    {name:"더블초코라떼", price:4000, temp:"BOTH"},
+    {name:"쿠키초코라떼", price:4000, temp:"BOTH"},
+    {name:"흑당밀크", price:4000, temp:"ICE"},
+    {name:"밀크티", price:4300, temp:"BOTH"},
+    {name:"딸기라떼", price:4300, temp:"ICE"},
+    {name:"망고라떼", price:4300, temp:"ICE"},
+    {name:"블루베리라떼", price:4300, temp:"ICE"},
+    {name:"생초콜릿라떼", price:5000, temp:"ICE"},
+    {name:"너티 크림 라떼", price:3400, temp:"ICE"},
+    {name:"바닐라 크림 라떼", price:3400, temp:"ICE"},
+  ],
+  "밀크쉐이크":[
+    {name:"플레인밀크쉐이크", price:4700, temp:"ICE"},
+    {name:"캔디소다밀크쉐이크", price:4700, temp:"ICE"},
+    {name:"쿠키밀크쉐이크", price:5000, temp:"ICE"},
+    {name:"커피밀크쉐이크", price:5000, temp:"ICE"},
+    {name:"팥절미밀크쉐이크", price:5000, temp:"ICE"},
+  ],
+  "스무디/프라페":[
+    {name:"딸기스무디", price:4300, temp:"ICE"},
+    {name:"망고스무디", price:4300, temp:"ICE"},
+    {name:"블루베리스무디", price:4300, temp:"ICE"},
+    {name:"유자스무디", price:4300, temp:"ICE"},
+    {name:"초코베리요거스무디", price:5800, temp:"ICE"},
+    {name:"딸기요거트스무디", price:4500, temp:"ICE"},
+    {name:"망고요거트스무디", price:4500, temp:"ICE"},
+    {name:"블루베리요거트스무디", price:4500, temp:"ICE"},
+    {name:"플레인요거트스무디", price:4500, temp:"ICE"},
+    {name:"리얼초코자바칩프라페", price:4500, temp:"ICE"},
+    {name:"쿠키초코프라페", price:4500, temp:"ICE"},
+    {name:"그린티프라페", price:4500, temp:"ICE"},
+    {name:"모카자바칩프라페", price:5000, temp:"ICE"},
+  ],
+  "에이드/주스":[
+    {name:"자몽에이드", price:4000, temp:"ICE"},
+    {name:"레몬에이드", price:4000, temp:"ICE"},
+    {name:"망고에이드", price:4000, temp:"ICE"},
+    {name:"유자에이드", price:4000, temp:"ICE"},
+    {name:"블루레몬에이드", price:4000, temp:"ICE"},
+    {name:"청포도에이드", price:4000, temp:"ICE"},
+    {name:"패션후르츠에이드", price:4000, temp:"ICE"},
+    {name:"키위주스", price:4300, temp:"ICE"},
+    {name:"복숭아주스", price:4300, temp:"ICE"},
+    {name:"오렌지당근주스", price:4300, temp:"ICE"},
+    {name:"샤인머스켓케일주스", price:4300, temp:"ICE"},
+    {name:"국내산 딸기주스", price:4800, temp:"ICE"},
+    {name:"그레인 바나나 주스", price:4300, temp:"ICE"},
+    {name:"논산에서 온 수박 주스", price:4400, temp:"ICE"},
+    {name:"솔티드 쿨 리치", price:3000, temp:"ICE"},
+    {name:"빅포즈 솔티드 쿨 리치", price:4600, temp:"ICE"},
+    {name:"망고 자몽 요거빙", price:4400, temp:"ICE"},
+    {name:"연유 수박 팥빙", price:4400, temp:"ICE"},
+  ],
+  "티":[
+    {name:"페퍼민트", price:3000, temp:"BOTH"},
+    {name:"캐모마일", price:3000, temp:"BOTH"},
+    {name:"히비스커스", price:3000, temp:"BOTH"},
+    {name:"블랙퍼스트", price:3000, temp:"BOTH"},
+    {name:"얼그레이", price:3000, temp:"BOTH"},
+  ],
+  "티:베버리지":[
+    {name:"대추차", price:3400, temp:"HOT"},
+    {name:"쌍화차", price:3400, temp:"HOT"},
+    {name:"매실차", price:3400, temp:"BOTH"},
+    {name:"청귤생강차", price:4000, temp:"HOT"},
+    {name:"아이스티", price:3500, temp:"ICE"},
+    {name:"빅포즈 아이스티", price:4400, temp:"ICE"},
+    {name:"자몽허니과일티", price:4000, temp:"BOTH"},
+    {name:"레몬허니과일티", price:4000, temp:"BOTH"},
+    {name:"유자허니과일티", price:4000, temp:"BOTH"},
+    {name:"자몽허니블랙티", price:4300, temp:"BOTH"},
+    {name:"아망추", price:4300, temp:"ICE"},
+    {name:"빅포즈 아망추", price:6300, temp:"ICE"},
+  ],
+};
+
+let selectedPerson="", activeCat=Object.keys(MENU)[0], pendingItem=null, pendingTemp=null;
+
+const whoSelect=document.getElementById('whoSelect');
+PEOPLE.forEach(n=>{const o=document.createElement('option');o.value=n;o.textContent=n;whoSelect.appendChild(o);});
+whoSelect.onchange=()=>{selectedPerson=whoSelect.value;};
+
+const tabsEl=document.getElementById('tabs');
+Object.keys(MENU).forEach(cat=>{
+  const t=document.createElement('button');
+  t.className='tab'+(cat===activeCat?' active':'');
+  t.textContent=cat;
+  t.onclick=()=>{activeCat=cat;document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));t.classList.add('active');renderMenu();};
+  tabsEl.appendChild(t);
+});
+
+const menuEl=document.getElementById('menu');
+function renderMenu(){
+  menuEl.innerHTML='';
+  MENU[activeCat].forEach(m=>{
+    const c=document.createElement('button');c.className='item';
+    let badge='';
+    if(m.temp==='HOT')badge='<span class="badge b-hot">🔥 HOT only</span>';
+    if(m.temp==='ICE')badge='<span class="badge b-ice">🧊 ICE only</span>';
+    c.innerHTML=badge+'<div class="nm">'+m.name+'</div><div class="pr">'+m.price.toLocaleString()+'원</div>';
+    c.onclick=()=>openModal(m);
+    menuEl.appendChild(c);
+  });
+}
+renderMenu();
+
+const overlay=document.getElementById('overlay');
+function openModal(m){
+  pendingItem=m;pendingTemp=null;
+  document.getElementById('mName').textContent=m.name;
+  document.getElementById('mPrice').textContent=m.price.toLocaleString()+'원';
+  document.getElementById('mNote').value='';
+  document.getElementById('warn').classList.remove('show');
+  const bh=document.getElementById('btnHot'),bi=document.getElementById('btnIce');
+  bh.className='temp-btn';bi.className='temp-btn';
+  bh.disabled=(m.temp==='ICE');bi.disabled=(m.temp==='HOT');
+  if(m.temp==='HOT')pickTemp('HOT');
+  if(m.temp==='ICE')pickTemp('ICE');
+  overlay.classList.add('show');
+}
+function closeModal(){overlay.classList.remove('show');pendingItem=null;}
+overlay.addEventListener('click',e=>{if(e.target===overlay)closeModal();});
+function pickTemp(t){
+  pendingTemp=t;
+  document.getElementById('btnHot').className='temp-btn'+(t==='HOT'?' sel-hot':'');
+  document.getElementById('btnIce').className='temp-btn'+(t==='ICE'?' sel-ice':'');
+}
+
+const confirmOverlay=document.getElementById('confirmOverlay');
+function askConfirm(){
+  if(!selectedPerson||!pendingTemp){document.getElementById('warn').classList.add('show');return;}
+  const note=document.getElementById('mNote').value.trim();
+  const tEmoji=pendingTemp==='HOT'?'🔥':'🧊';
+  let line=pendingItem.name+' '+tEmoji+pendingTemp;
+  if(note)line+=' · '+note;
+  document.getElementById('confirmMsg').innerHTML='<span class="hl">'+selectedPerson+'</span>님,<br>'+line+'<br>주문 맞으실까요?';
+  confirmOverlay.classList.add('show');
+}
+function closeConfirm(){confirmOverlay.classList.remove('show');}
+confirmOverlay.addEventListener('click',e=>{if(e.target===confirmOverlay)closeConfirm();});
+
+/* === 주문완료 → 구글시트 전송 (doPost 방식) === */
+// ▼▼▼ 여기에 본인의 Apps Script 웹앱 /exec 주소를 붙여넣으세요 ▼▼▼
+const SHEET_URL = "여기에_웹앱_URL_붙여넣기";
+// ▲▲▲ 예: https://script.google.com/macros/s/AKfy.../exec ▲▲▲
+
+const sendOverlay=document.getElementById('sendOverlay');
+function submitOrder(){
+  document.getElementById('finalBtn').disabled=true;
+  const order={person:selectedPerson,name:pendingItem.name,temp:pendingTemp,note:document.getElementById('mNote').value.trim(),price:pendingItem.price};
+  confirmOverlay.classList.remove('show');
+  closeModal();
+  document.getElementById('sendBox').classList.add('sending');
+  document.getElementById('sendCup').textContent='☕';
+  document.getElementById('sendMsg').textContent='주문을 전하고 있어요...';
+  document.getElementById('sendNote').textContent='잠시만 기다려 주세요';
+  document.getElementById('sendActions').style.display='none';
+  sendOverlay.classList.add('show');
+
+  if(!SHEET_URL || SHEET_URL.indexOf('http')!==0){
+    setTimeout(()=>onPreview(),900);
+    return;
+  }
+
+  fetch(SHEET_URL, {
+    method:'POST',
+    mode:'no-cors',
+    headers:{'Content-Type':'text/plain;charset=utf-8'},
+    body:JSON.stringify({items:[order]})
+  }).then(()=>onSent()).catch((err)=>onFail(err));
+}
+function onSent(){
+  document.getElementById('finalBtn').disabled=false;
+  document.getElementById('sendBox').classList.remove('sending');
+  document.getElementById('sendCup').textContent='🎉';
+  document.getElementById('sendMsg').textContent='주문 완료!';
+  document.getElementById('sendNote').textContent='맛있게 만들어 드릴게요 ☕';
+  document.getElementById('sendActions').style.display='flex';
+}
+function onPreview(){
+  document.getElementById('finalBtn').disabled=false;
+  document.getElementById('sendBox').classList.remove('sending');
+  document.getElementById('sendCup').textContent='👀';
+  document.getElementById('sendMsg').textContent='미리보기 모드예요';
+  document.getElementById('sendNote').textContent='SHEET_URL을 넣으면 실제로 시트에 전송됩니다';
+  document.getElementById('sendActions').style.display='flex';
+}
+function onFail(err){
+  document.getElementById('finalBtn').disabled=false;
+  document.getElementById('sendBox').classList.remove('sending');
+  document.getElementById('sendCup').textContent='😢';
+  document.getElementById('sendMsg').textContent='전송에 실패했어요';
+  document.getElementById('sendNote').textContent='인터넷 확인 후 다시 시도해주세요';
+  document.getElementById('sendActions').style.display='flex';
+}
+function closeSend(){
+  sendOverlay.classList.remove('show');
+  whoSelect.value='';selectedPerson='';pendingItem=null;pendingTemp=null;
+}
+
+let tt;
+function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>el.classList.remove('show'),1900);}
+</script>
+</body>
+</html>
